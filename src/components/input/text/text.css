@@ -1,0 +1,10 @@
+.input-text {
+    background-color: transparent !important;
+    border: 0 !important;
+    color: #000 !important;
+    font-size: 12pt;
+    height: 48px !important;
+    outline: 0 !important;
+    padding: 0 8px !important;
+    width: 100%;
+  }
