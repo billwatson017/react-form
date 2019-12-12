@@ -1,59 +1,46 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import InputContainer from "../src/components/input-container";
-import InputText from "../src/components/input/text";
-import { useForm } from "react-form";
-import { isRequired, isEmail } from "../src/libs/validation";
+import InputForm from "./components/input-form";
+import InputContainer from "./components/input-container";
+import InputText from "./components/input/text";
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons'
 
+// object used to populate the default values for the entire form
+const defaultValues = {
+  first_name: "bill"
+}
+
+// function used to validate multiple fields at the same time
+const validate = (values) => {
+  if (values.first_name === "john") {
+    return "change default value";
+  }
+  return false;
+}
+
+// function used to hand form submit event
+const onSubmit  = async (values, instance) => {
+  await new Promise(resolve => setTimeout(resolve, 1000));
+}
+
+// field validation
+const fieldValidation= (value) => {
+  return value.length < 10 ? "name needs to be greater than 12 characters" : false
+}
+
 function App() {
-  // set default values
-  const defaultValues = React.useMemo(
-    () => ({
-      first_name: "",
-      last_name: "",
-      email_address: ""
-    }),
-    []
-  );
-  const {
-    Form,
-    meta: { isSubmitting, isSubmitted, canSubmit, error }
-  } = useForm({
-    defaultValues,
-    validate: values => {
-      // validate any combinations of field values here
-    },
-    onSubmit: async (values, instance) => {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-    },
-    debugForm: true
-  });
-
   return (
-    <Form>
-      <div style={{width: "500px", marginLeft: "auto", marginRight: "auto"}}>
-      <InputContainer field="first_name" label="Given Name" Input={InputText} validate={isRequired} />
+    <>
+    <InputForm debugForm={true} onSubmit={onSubmit} validate={validate} defaultValues={defaultValues} >
+      <InputContainer field="first_name" label="Given Name" Input={InputText} required validate={fieldValidation}/>
       <br />
       <br />
-      <InputContainer field="last_name" label="Family Name" Input={InputText} validate={isRequired} />
+      <InputContainer field="last_name" label="Family Name" Input={InputText} defaultValue="watson" required />
       <br />
       <br />
-      <InputContainer field="email_address" label="Email" Input={InputText} Icon={faEnvelope} validate={isEmail} />
-
-      {isSubmitted ? <em>Thanks for submitting!</em> : null}
-
-      {error ? <strong>{error}</strong> : null}
-
-      {isSubmitting ? (
-        "Submitting..."
-      ) : (
-        <div>
-          <button type="submit" disable={!canSubmit}>Submit</button>
-        </div>
-      )}
-      </div>
-    </Form>
+      <InputContainer field="email_address" label="Email" Input={InputText} Icon={faEnvelope} />
+    </InputForm>
+    </>
   );
 }
 
