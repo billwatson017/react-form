@@ -1,6 +1,3 @@
-export const isRequired = (value) => {
-    return !value ? "Required" : false
-}
 
 export const isEmail = async value => {
     if (!value) {
@@ -9,7 +6,6 @@ export const isEmail = async value => {
       if (!validateEmail(value)) {
         return "Please enter a valid email addresss";
       }
-      console.log(`Checking email: ${value}...`);
       await new Promise(resolve => setTimeout(resolve, 2000));
 
       return value === "bill@gmail.com"

@@ -1,15 +1,29 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { useField, splitFormProps } from "react-form";
 import "../input-container/input-container.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faExclamation } from '@fortawesome/free-solid-svg-icons'
 
 // input-container contains form layout, style and validation for app
-export const InputContainer =  React.forwardRef((props, ref) => {
-  const { Input, Icon, label, ...passThru } = props;
+export const InputContainer = (props) => {
+  const {Input, required, Icon, ...passThru} = props
+
+  let validate = props.validate;
+  if (required) {
+    validate = value => {
+      if (!value) {
+        return "Required";
+      }
+      if (props.validate) {
+        return props.validate(value);
+      }
+      return false;
+    };
+  }
 
   // get form-specific props
-  const [field, fieldOptions] = splitFormProps(props);
+  const [field, fieldOptions, rest] = splitFormProps({...passThru, validate});
 
   // get field state
   const {
@@ -21,7 +35,7 @@ export const InputContainer =  React.forwardRef((props, ref) => {
     <>
       <div className="input-container">
         <div className="input-label">
-          {label}
+          {props.label}
           <span className="required">*</span>
         </div>
         <div className="input-wrapper">
@@ -31,7 +45,7 @@ export const InputContainer =  React.forwardRef((props, ref) => {
             </div>
           : null}
           <div className="element-wrapper">
-            <Input {...{ref, ...passThru, getInputProps}} />
+            <Input {...{getInputProps, rest}} />
           </div>
           {error ? 
             <div className="icon-wrapper error">
@@ -51,10 +65,20 @@ export const InputContainer =  React.forwardRef((props, ref) => {
       </div>
     </>
   );
-});
+};
 
 InputContainer.defaultProps = {
-  //default props 
-}
+  field: '',
+  label: '',
+  defaultValue: '',
+  required: false
+};
+
+InputContainer.propTypes = {
+  field: PropTypes.string,
+  label: PropTypes.string,
+  defaultValue: PropTypes.string,
+  required: PropTypes.bool
+};
 
 export default InputContainer;
